@@ -1,0 +1,87 @@
+package entity
+
+import (
+	"errors"
+	"strings"
+	"time"
+)
+
+type Student struct {
+	ID        string
+	Name      string
+	Age       int
+	Gender    string
+	Scores    map[string]float64
+	CreatedAt time.Time
+	UpdatesAt time.Time
+}
+
+func NewStudent(id, name string, age int, gender string) (*Student, error) {
+	student := &Student{
+		ID:        strings.TrimSpace(id),
+		Name:      strings.TrimSpace(name),
+		Age:       age,
+		Gender:    strings.TrimSpace(gender),
+		Scores:    make(map[string]float64),
+		CreatedAt: time.Now(),
+		UpdatesAt: time.Now(),
+	}
+
+	if err := student.Validata(); err != nil {
+		return nil, err
+	}
+
+	return student, nil
+}
+
+func (s *Student) Validata() error {
+	if strings.TrimSpace(s.ID) == "" {
+		return errors.New("student ID cannot be empty")
+	}
+
+	if strings.TrimSpace(s.Name) == "" {
+		return errors.New("student name cannot be empty")
+	}
+
+	if s.Age <= 0 {
+		return errors.New("student age must be greater than 0")
+	}
+
+	if strings.TrimSpace(s.Gender) == "" {
+		return errors.New("student gender cannot be empty")
+	}
+
+	return nil
+}
+
+func (s *Student) UpdateScore(subject string, score float64) error {
+	subject = strings.TrimSpace(subject)
+	if subject == "" {
+		return errors.New("subject canot be empty")
+	}
+
+	if score < 0 || score > 100 {
+		return errors.New("score must be between 0 and 100")
+	}
+
+	if s.Scores == nil {
+		s.Scores = make(map[string]float64)
+	}
+
+	s.Scores[subject] = score
+	s.UpdatesAt = time.Now()
+	return nil
+}
+
+func (s *Student) AverageScore() float64 {
+	if len(s.Scores) == 0 {
+		return 0
+	}
+
+	var total float64
+	for _, score := range s.Scores {
+		total += score
+	}
+
+	return total / float64(len(s.Scores))
+}
