@@ -85,3 +85,27 @@ func (s *Student) AverageScore() float64 {
 
 	return total / float64(len(s.Scores))
 }
+
+func (s *Student) UpdateBasicInfo(name string, age int, gender string) error {
+	name = strings.TrimSpace(name)
+	gender = strings.TrimSpace(gender)
+
+	if name == "" {
+		return errors.New("name cannot be empty")
+	}
+
+	if age <= 0 {
+		return errors.New("age must be greater than 0")
+	}
+
+	if gender == "" {
+		return errors.New("gender cannot be empty")
+	}
+
+	s.Name = name
+	s.Age = age
+	s.Gender = gender
+	s.UpdatesAt = time.Now()
+
+	return nil
+}

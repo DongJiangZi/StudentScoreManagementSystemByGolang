@@ -1,0 +1,66 @@
+[
+  {
+    "ID": "S002",
+    "Name": "Bob",
+    "Age": 22,
+    "Gender": "Male",
+    "Scores": {
+      "Chinese": 80,
+      "English": 85,
+      "Math": 78
+    },
+    "CreatedAt": "2026-03-20T10:05:00Z",
+    "UpdatesAt": "0001-01-01T00:00:00Z"
+  },
+  {
+    "ID": "S003",
+    "Name": "Charlie",
+    "Age": 21,
+    "Gender": "Male",
+    "Scores": {
+      "Chinese": 89,
+      "English": 90,
+      "Math": 92
+    },
+    "CreatedAt": "2026-03-20T10:10:00Z",
+    "UpdatesAt": "0001-01-01T00:00:00Z"
+  },
+  {
+    "ID": "S004",
+    "Name": "Diana",
+    "Age": 19,
+    "Gender": "Female",
+    "Scores": {
+      "Chinese": 87,
+      "English": 93,
+      "Math": 84
+    },
+    "CreatedAt": "2026-03-20T10:15:00Z",
+    "UpdatesAt": "0001-01-01T00:00:00Z"
+  },
+  {
+    "ID": "S005",
+    "Name": "Ethandawn",
+    "Age": 21,
+    "Gender": "Male",
+    "Scores": {
+      "English": 90,
+      "Math": 95
+    },
+    "CreatedAt": "2026-03-20T20:19:08.5188454+08:00",
+    "UpdatesAt": "2026-03-20T20:23:08.1663369+08:00"
+  },
+  {
+    "ID": "S001",
+    "Name": "Alice",
+    "Age": 20,
+    "Gender": "Female",
+    "Scores": {
+      "Chinese": 91,
+      "English": 88,
+      "Math": 95
+    },
+    "CreatedAt": "2026-03-20T10:00:00Z",
+    "UpdatesAt": "0001-01-01T00:00:00Z"
+  }
+]

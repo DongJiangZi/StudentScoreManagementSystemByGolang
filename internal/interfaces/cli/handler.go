@@ -37,6 +37,8 @@ func (h *Handler) Run() {
 			h.handleUpdateScore()
 		case "5":
 			h.handleDeleteStudent()
+		case "6":
+			h.handleUpdateStudentInfo()
 		case "0":
 			fmt.Println("Bye!")
 			return
@@ -55,6 +57,7 @@ func (h *Handler) printMenu() {
 	fmt.Println("3. List all students")
 	fmt.Println("4. Update student score")
 	fmt.Println("5. Delete student")
+	fmt.Println("6. Update student info")
 	fmt.Println("0. Exit")
 }
 
@@ -147,6 +150,27 @@ func (h *Handler) handleDeleteStudent() {
 	}
 
 	fmt.Println("Student deleted successfully.")
+}
+
+func (h *Handler) handleUpdateStudentInfo() {
+	id := h.readLine("Enter student ID: ")
+	name := h.readLine("Enter new name: ")
+	ageText := h.readLine("Enter new age: ")
+	gender := h.readLine("Enter new gender: ")
+
+	age, err := strconv.Atoi(ageText)
+	if err != nil {
+		fmt.Println("Invalid age.")
+		return
+	}
+
+	err = h.studentService.UpdateStudentInfo(id, name, age, gender)
+	if err != nil {
+		fmt.Println("Update student info failed:", err)
+		return
+	}
+
+	fmt.Println("Student info updated successfully.")
 }
 
 func (h *Handler) readLine(prompt string) string {
