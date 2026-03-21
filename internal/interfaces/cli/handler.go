@@ -39,6 +39,12 @@ func (h *Handler) Run() {
 			h.handleDeleteStudent()
 		case "6":
 			h.handleUpdateStudentInfo()
+		case "7":
+			h.handlerListStudentsByAverage()
+		case "8":
+			h.handlerListFailedStudents()
+		case "9":
+			h.handlerTopNStudents()
 		case "0":
 			fmt.Println("Bye!")
 			return
@@ -58,6 +64,9 @@ func (h *Handler) printMenu() {
 	fmt.Println("4. Update student score")
 	fmt.Println("5. Delete student")
 	fmt.Println("6. Update student info")
+	fmt.Println("7. List students by average score")
+	fmt.Println("8. List failed students")
+	fmt.Println("9. Show top N students")
 	fmt.Println("0. Exit")
 }
 
@@ -171,6 +180,71 @@ func (h *Handler) handleUpdateStudentInfo() {
 	}
 
 	fmt.Println("Student info updated successfully.")
+}
+
+func (h *Handler) handlerListStudentsByAverage() {
+	students, err := h.studentService.ListStudentsByAverageDesc()
+	if err != nil {
+		fmt.Println("List students by average failed: ", err)
+		return
+	}
+
+	if len(students) == 0 {
+		fmt.Println("No students found.")
+		return
+	}
+
+	fmt.Println("Students ranked by average score: ")
+	for i, student := range students {
+		fmt.Printf("%d. ID: %s, Name: %s, Avg: %.2f\n",
+			i+1, student.ID, student.Name, student.Age)
+	}
+}
+
+func (h *Handler) handlerListFailedStudents() {
+	students, err := h.studentService.ListFailedStudents()
+	if err != nil {
+		fmt.Println("List failed students failed: ", err)
+		return
+	}
+
+	if len(students) == 0 {
+		fmt.Println("No failed students found.")
+		return
+	}
+
+	fmt.Println("Failed students: ")
+	for _, student := range students {
+		fmt.Printf("ID: %s, Name: %s, Scores: %+v, Avg: %.2f\n",
+			student.ID, student.Name, student.Scores, student.Age)
+	}
+}
+
+func (h *Handler) handlerTopNStudents() {
+	nText := h.readLine("Enter N: ")
+
+	n, err := strconv.Atoi(nText)
+	if err != nil {
+		fmt.Println("Invalid number.")
+		return
+	}
+
+	students, err := h.studentService.TopNStudentsByAverage(n)
+	if err != nil {
+		fmt.Println("Top N students failed: ", err)
+		return
+	}
+
+	if len(students) == 0 {
+		fmt.Println("No students found.")
+		return
+	}
+
+	fmt.Printf("Top %d students: \n", len(students))
+	for i, student := range students {
+		fmt.Printf("%d. ID: %s, Name: %s, Avg: %.2f\n",
+			i+1, student.ID, student.Name, student.Age)
+	}
 }
 
 func (h *Handler) readLine(prompt string) string {

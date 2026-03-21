@@ -109,3 +109,21 @@ func (s *Student) UpdateBasicInfo(name string, age int, gender string) error {
 
 	return nil
 }
+
+func (s *Student) HasFailedSubject() bool {
+	for _, score := range s.Scores {
+		if score < 60 {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Student) HashScores() bool {
+	return len(s.Scores) > 0
+}
+
+func (s *Student) GetScore(subject string) (float64, bool) {
+	score, ok := s.Scores[subject]
+	return score, ok
+}

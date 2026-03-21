@@ -3,15 +3,15 @@ package main
 import (
 	"EduCoreStudentManagementSystem/internal/app/service"
 	"EduCoreStudentManagementSystem/internal/infrastructure/config"
+	"EduCoreStudentManagementSystem/internal/infrastructure/factory"
 	filelogger "EduCoreStudentManagementSystem/internal/infrastructure/logger/async"
 	cliHandler "EduCoreStudentManagementSystem/internal/interfaces/cli"
-	jsonrepo "EduCoreStudentManagementSystem/internal/repository/json"
 )
 
 func main() {
 	cfg := config.Load()
 
-	repo, err := jsonrepo.NewStudentRepository(cfg.DataFilePath)
+	repo, err := factory.NewStudentRepository(cfg)
 	if err != nil {
 		panic(err)
 	}

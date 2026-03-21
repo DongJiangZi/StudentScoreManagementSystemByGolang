@@ -5,6 +5,8 @@ import (
 	"EduCoreStudentManagementSystem/internal/infrastructure/logger"
 	"EduCoreStudentManagementSystem/internal/repository"
 	"errors"
+	"sort"
+	"strconv"
 )
 
 var (
@@ -104,4 +106,57 @@ func (s *StudentService) UpdateStudentInfo(id, name string, age int, gender stri
 	}
 
 	return nil
+}
+
+func (s *StudentService) ListStudentsByAverageDesc() ([]*entity.Student, error) {
+	students, err := s.repo.FindAll()
+	if err != nil {
+		s.logger.Error("list students by average failed, repository error: " + err.Error())
+		return nil, err
+	}
+
+	sort.Slice(students, func(i, j int) bool {
+		return students[i].AverageScore() > students[j].AverageScore()
+	})
+
+	s.logger.Info("listed students by average score descending")
+	return students, nil
+}
+
+func (s *StudentService) ListFailedStudents() ([]*entity.Student, error) {
+	students, err := s.repo.FindAll()
+	if err != nil {
+		s.logger.Error("list failed students failed, repository error: " + err.Error())
+		return nil, err
+	}
+
+	var failed []*entity.Student
+	for _, student := range students {
+		if student.HasFailedSubject() {
+			failed = append(failed, student)
+		}
+	}
+
+	s.logger.Info("listed failed students")
+	return students, nil
+}
+
+func (s *StudentService) TopNStudentsByAverage(n int) ([]*entity.Student, error) {
+	if n <= 0 {
+		return []*entity.Student{}, nil
+	}
+
+	students, err := s.ListStudentsByAverageDesc()
+	if err != nil {
+		s.logger.Error("top N students failed: " + err.Error())
+		return nil, err
+	}
+
+	if n > len(students) {
+		n = len(students)
+	}
+
+	results := students[:n]
+	s.logger.Info("listed top students by average, n=" + strconv.Itoa(n))
+	return results, nil
 }
