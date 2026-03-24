@@ -3,15 +3,10 @@ package service
 import (
 	"EduCoreStudentManagementSystem/internal/domain/entity"
 	"EduCoreStudentManagementSystem/internal/infrastructure/logger"
+	"EduCoreStudentManagementSystem/internal/pkg/errs"
 	"EduCoreStudentManagementSystem/internal/repository"
-	"errors"
 	"sort"
 	"strconv"
-)
-
-var (
-	ErrStudentAlreadyExists = errors.New("student already exists")
-	ErrStudentNotFound      = errors.New("student not found")
 )
 
 type StudentService struct {
@@ -26,15 +21,15 @@ func NewStudentService(repo repository.StudentRepository, logger logger.Logger) 
 	}
 }
 
-func (s *StudentService) CreateStudent(id, name string, age int, gender string) (*entity.Student, error) {
-	s.logger.Info("creating student: " + id)
+func (s *StudentService) CreateStudent(req CreateStudentRequest) (*entity.Student, error) {
+	s.logger.Info("creating student: " + req.ID)
 
-	existing, err := s.repo.FindByID(id)
+	existing, err := s.repo.FindByID(req.ID)
 	if err == nil && existing != nil {
-		return nil, ErrStudentAlreadyExists
+		return nil, errs.ErrStudentAlreadyExists
 	}
 
-	student, err := entity.NewStudent(id, name, age, gender)
+	student, err := entity.NewStudent(req.ID, req.Name, req.Age, req.Gender)
 	if err != nil {
 		return nil, err
 	}
@@ -44,14 +39,14 @@ func (s *StudentService) CreateStudent(id, name string, age int, gender string) 
 		return nil, err
 	}
 
-	s.logger.Info("student created: " + id)
+	s.logger.Info("student created: " + req.ID)
 	return student, nil
 }
 
 func (s *StudentService) GetStudent(id string) (*entity.Student, error) {
 	student, err := s.repo.FindByID(id)
 	if err != nil {
-		return nil, ErrStudentNotFound
+		return nil, errs.ErrStudentNotFound
 	}
 
 	return student, nil
@@ -61,13 +56,13 @@ func (s *StudentService) ListStudents() ([]*entity.Student, error) {
 	return s.repo.FindAll()
 }
 
-func (s *StudentService) UpdateStudentScore(id, subject string, score float64) error {
-	student, err := s.repo.FindByID(id)
+func (s *StudentService) UpdateStudentScore(req UpdateStudentScoreRequest) error {
+	student, err := s.repo.FindByID(req.ID)
 	if err != nil {
-		return ErrStudentNotFound
+		return errs.ErrStudentNotFound
 	}
 
-	if err := student.UpdateScore(subject, score); err != nil {
+	if err := student.UpdateScore(req.Subject, req.Score); err != nil {
 		return err
 	}
 
@@ -91,13 +86,13 @@ func (s *StudentService) DeleteStudent(id string) error {
 	return nil
 }
 
-func (s *StudentService) UpdateStudentInfo(id, name string, age int, gender string) error {
-	student, err := s.repo.FindByID(id)
+func (s *StudentService) UpdateStudentInfo(req UpdateStudentInfoRequest) error {
+	student, err := s.repo.FindByID(req.ID)
 	if err != nil {
-		return ErrStudentNotFound
+		return errs.ErrStudentNotFound
 	}
 
-	if err := student.UpdateBasicInfo(name, age, gender); err != nil {
+	if err := student.UpdateBasicInfo(req.Name, req.Age, req.Gender); err != nil {
 		return err
 	}
 
