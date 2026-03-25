@@ -13,7 +13,7 @@ type Student struct {
 	Gender    string
 	Scores    map[string]float64
 	CreatedAt time.Time
-	UpdatesAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewStudent(id, name string, age int, gender string) (*Student, error) {
@@ -24,17 +24,17 @@ func NewStudent(id, name string, age int, gender string) (*Student, error) {
 		Gender:    strings.TrimSpace(gender),
 		Scores:    make(map[string]float64),
 		CreatedAt: time.Now(),
-		UpdatesAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
-	if err := student.Validata(); err != nil {
+	if err := student.Validate(); err != nil {
 		return nil, err
 	}
 
 	return student, nil
 }
 
-func (s *Student) Validata() error {
+func (s *Student) Validate() error {
 	if strings.TrimSpace(s.ID) == "" {
 		return errors.New("student ID cannot be empty")
 	}
@@ -57,7 +57,7 @@ func (s *Student) Validata() error {
 func (s *Student) UpdateScore(subject string, score float64) error {
 	subject = strings.TrimSpace(subject)
 	if subject == "" {
-		return errors.New("subject canot be empty")
+		return errors.New("subject cannot be empty")
 	}
 
 	if score < 0 || score > 100 {
@@ -69,7 +69,7 @@ func (s *Student) UpdateScore(subject string, score float64) error {
 	}
 
 	s.Scores[subject] = score
-	s.UpdatesAt = time.Now()
+	s.UpdatedAt = time.Now()
 	return nil
 }
 
@@ -105,7 +105,7 @@ func (s *Student) UpdateBasicInfo(name string, age int, gender string) error {
 	s.Name = name
 	s.Age = age
 	s.Gender = gender
-	s.UpdatesAt = time.Now()
+	s.UpdatedAt = time.Now()
 
 	return nil
 }
@@ -119,7 +119,7 @@ func (s *Student) HasFailedSubject() bool {
 	return false
 }
 
-func (s *Student) HashScores() bool {
+func (s *Student) HasScores() bool {
 	return len(s.Scores) > 0
 }
 

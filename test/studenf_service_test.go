@@ -14,6 +14,7 @@ func NewNoopLogger() *NoopLogger {
 }
 
 func (l *NoopLogger) Info(msg string) {}
+func (l *NoopLogger) Warn(msg string) {}
 func (l *NoopLogger) Error(msg string) {
 
 }
@@ -32,11 +33,11 @@ func TestCreateStudentSuccess(t *testing.T) {
 
 	student, err := service.CreateStudent(req)
 	if err != nil {
-		t.Fatal("expected no error, got %v", err)
+		t.Fatalf("expected no error, got %v", err)
 	}
 
 	if student.ID != "S001" {
-		t.Fatal("expected S001, got %v", student.ID)
+		t.Fatalf("expected S001, got %v", student.ID)
 	}
 }
 
@@ -81,7 +82,7 @@ func TestUpdateStudentScore(t *testing.T) {
 
 	err := service.UpdateStudentScore(updateReq)
 	if err != nil {
-		t.Fatal("expected no error, got %v", err)
+		t.Fatalf("expected no error, got %v", err)
 	}
 }
 
@@ -105,10 +106,10 @@ func TestTopNStudents(t *testing.T) {
 
 	result, err := service.TopNStudentsByAverage(2)
 	if err != nil {
-		t.Fatal("expected no error, got %v", err)
+		t.Fatalf("expected no error, got %v", err)
 	}
 
 	if len(result) != 2 {
-		t.Fatal("expected 2 students, got %d", len(result))
+		t.Fatalf("expected 2 students, got %d", len(result))
 	}
 }

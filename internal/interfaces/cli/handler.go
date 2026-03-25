@@ -5,7 +5,9 @@ import (
 	"EduCoreStudentManagementSystem/internal/domain/entity"
 	"EduCoreStudentManagementSystem/internal/pkg/errs"
 	"bufio"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -48,10 +50,10 @@ func (h *Handler) Run() {
 		case "9":
 			h.handlerTopNStudents()
 		case "0":
-			fmt.Println("Bye!")
+			fmt.Println("Exiting. Goodbye.")
 			return
 		default:
-			fmt.Println("Invalid choice, please try again.")
+			fmt.Println("Invalid menu option. Please try again.")
 		}
 
 		fmt.Println()
@@ -80,12 +82,7 @@ func (h *Handler) handleCreateStudent() {
 
 	age, err := strconv.Atoi(ageText)
 	if err != nil {
-		switch err {
-		case errs.ErrStudentAlreadyExists:
-			fmt.Println("Student ID already exists.")
-		default:
-			fmt.Println("Create student failed: ", err)
-		}
+		fmt.Println("Invalid input: age must be an integer.")
 		return
 	}
 
@@ -98,7 +95,7 @@ func (h *Handler) handleCreateStudent() {
 
 	student, err := h.studentService.CreateStudent(req)
 	if err != nil {
-		fmt.Println("Create student failed:", err)
+		fmt.Println(h.toUserMessage("Create student failed", err))
 		return
 	}
 
@@ -112,12 +109,7 @@ func (h *Handler) handleGetStudent() {
 
 	student, err := h.studentService.GetStudent(id)
 	if err != nil {
-		switch err {
-		case errs.ErrStudentNotFound:
-			fmt.Println("student not found.")
-		default:
-			fmt.Println("Get student failed: ", err)
-		}
+		fmt.Println(h.toUserMessage("Get student failed", err))
 		return
 	}
 
@@ -127,7 +119,7 @@ func (h *Handler) handleGetStudent() {
 func (h *Handler) handleListStudents() {
 	students, err := h.studentService.ListStudents()
 	if err != nil {
-		fmt.Println("List students failed: ", err)
+		fmt.Println(h.toUserMessage("List students failed", err))
 		return
 	}
 
@@ -146,12 +138,7 @@ func (h *Handler) handleUpdateScore() {
 
 	score, err := strconv.ParseFloat(scoreText, 64)
 	if err != nil {
-		switch err {
-		case errs.ErrStudentAlreadyExists:
-			fmt.Println("Student ID already exists.")
-		default:
-			fmt.Println("Create student failed: ", err)
-		}
+		fmt.Println("Invalid input: score must be a number.")
 		return
 	}
 
@@ -163,7 +150,7 @@ func (h *Handler) handleUpdateScore() {
 
 	err = h.studentService.UpdateStudentScore(req)
 	if err != nil {
-		fmt.Println("Update score failed:", err)
+		fmt.Println(h.toUserMessage("Update score failed", err))
 		return
 	}
 
@@ -175,12 +162,7 @@ func (h *Handler) handleDeleteStudent() {
 
 	err := h.studentService.DeleteStudent(id)
 	if err != nil {
-		switch err {
-		case errs.ErrStudentNotFound:
-			fmt.Println("Student not found.")
-		default:
-			fmt.Println("Delete student failed:", err)
-		}
+		fmt.Println(h.toUserMessage("Delete student failed", err))
 		return
 	}
 
@@ -195,7 +177,7 @@ func (h *Handler) handleUpdateStudentInfo() {
 
 	age, err := strconv.Atoi(ageText)
 	if err != nil {
-		fmt.Println("Invalid age.")
+		fmt.Println("Invalid input: age must be an integer.")
 		return
 	}
 
@@ -208,7 +190,7 @@ func (h *Handler) handleUpdateStudentInfo() {
 
 	err = h.studentService.UpdateStudentInfo(req)
 	if err != nil {
-		fmt.Println("Update student info failed:", err)
+		fmt.Println(h.toUserMessage("Update student info failed", err))
 		return
 	}
 
@@ -218,7 +200,7 @@ func (h *Handler) handleUpdateStudentInfo() {
 func (h *Handler) handlerListStudentsByAverage() {
 	students, err := h.studentService.ListStudentsByAverageDesc()
 	if err != nil {
-		fmt.Println("List students by average failed: ", err)
+		fmt.Println(h.toUserMessage("List students by average failed", err))
 		return
 	}
 
@@ -233,7 +215,7 @@ func (h *Handler) handlerListStudentsByAverage() {
 func (h *Handler) handlerListFailedStudents() {
 	students, err := h.studentService.ListFailedStudents()
 	if err != nil {
-		fmt.Println("List failed students failed: ", err)
+		fmt.Println(h.toUserMessage("List failed students failed", err))
 		return
 	}
 
@@ -250,13 +232,13 @@ func (h *Handler) handlerTopNStudents() {
 
 	n, err := strconv.Atoi(nText)
 	if err != nil {
-		fmt.Println("Invalid number.")
+		fmt.Println("Invalid input: N must be an integer.")
 		return
 	}
 
 	students, err := h.studentService.TopNStudentsByAverage(n)
 	if err != nil {
-		fmt.Println("Top N students failed: ", err)
+		fmt.Println(h.toUserMessage("Top N students failed", err))
 		return
 	}
 
@@ -270,12 +252,16 @@ func (h *Handler) handlerTopNStudents() {
 
 func (h *Handler) readLine(prompt string) string {
 	fmt.Print(prompt)
-	input, _ := h.reader.ReadString('\n')
+	input, err := h.reader.ReadString('\n')
+	if err != nil && !errors.Is(err, io.EOF) {
+		fmt.Printf("Read input failed: %v\n", err)
+		return ""
+	}
 	return strings.TrimSpace(input)
 }
 
 func (h *Handler) printStudentDetail(student *entity.Student) {
-	fmt.Printf("----- Student Detail -----")
+	fmt.Println("----- Student Detail -----")
 	fmt.Printf("ID      : %s\n", student.ID)
 	fmt.Printf("Name    : %s\n", student.Name)
 	fmt.Printf("Age     : %d\n", student.Age)
@@ -285,7 +271,7 @@ func (h *Handler) printStudentDetail(student *entity.Student) {
 	if len(student.Scores) == 0 {
 		fmt.Println("Scores  : No scores")
 	} else {
-		fmt.Println("Scores  : ")
+		fmt.Println("Scores  :")
 		for subject, score := range student.Scores {
 			fmt.Printf("  - %s: %.2f\n", subject, score)
 		}
@@ -334,4 +320,15 @@ func (h *Handler) printRankedStudents(title string, students []*entity.Student) 
 	}
 
 	fmt.Println("========================")
+}
+
+func (h *Handler) toUserMessage(action string, err error) string {
+	switch {
+	case errors.Is(err, errs.ErrStudentNotFound):
+		return action + ": student not found"
+	case errors.Is(err, errs.ErrStudentAlreadyExists):
+		return action + ": student ID already exists"
+	default:
+		return action + ": " + err.Error()
+	}
 }

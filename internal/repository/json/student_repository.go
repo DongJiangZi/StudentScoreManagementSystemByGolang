@@ -2,15 +2,10 @@ package json
 
 import (
 	"EduCoreStudentManagementSystem/internal/domain/entity"
+	"EduCoreStudentManagementSystem/internal/pkg/errs"
 	"encoding/json"
-	"errors"
 	"os"
 	"sync"
-)
-
-var (
-	ErrStudentAlreadyExists = errors.New("student already exists")
-	ErrStudentNotFound      = errors.New("student not found")
 )
 
 type StudentRepository struct {
@@ -77,7 +72,7 @@ func (r *StudentRepository) Create(student *entity.Student) error {
 	defer r.mu.Unlock()
 
 	if _, exists := r.data[student.ID]; exists {
-		return ErrStudentAlreadyExists
+		return errs.ErrStudentAlreadyExists
 	}
 
 	r.data[student.ID] = student
@@ -89,7 +84,7 @@ func (r *StudentRepository) Update(student *entity.Student) error {
 	defer r.mu.Unlock()
 
 	if _, exists := r.data[student.ID]; !exists {
-		return ErrStudentNotFound
+		return errs.ErrStudentNotFound
 	}
 
 	r.data[student.ID] = student
@@ -101,7 +96,7 @@ func (r *StudentRepository) Delete(id string) error {
 	defer r.mu.Unlock()
 
 	if _, exists := r.data[id]; !exists {
-		return ErrStudentNotFound
+		return errs.ErrStudentNotFound
 	}
 
 	delete(r.data, id)
@@ -114,7 +109,7 @@ func (r *StudentRepository) FindByID(id string) (*entity.Student, error) {
 
 	student, exists := r.data[id]
 	if !exists {
-		return nil, ErrStudentNotFound
+		return nil, errs.ErrStudentNotFound
 	}
 
 	return student, nil
