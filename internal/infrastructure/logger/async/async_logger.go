@@ -35,7 +35,7 @@ func NewAsyncLogger(filePath string) (*AsyncLogger, error) {
 
 func (l *AsyncLogger) run() {
 	for entry := range l.logChan {
-		line := fmt.Sprint("[%s] [%s] %s",
+		line := fmt.Sprintf("[%s] [%s] %s",
 			entry.Time.Format("2006-01-02 15:04:05"),
 			entry.Level,
 			entry.Message,

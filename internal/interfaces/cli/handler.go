@@ -121,13 +121,7 @@ func (h *Handler) handleGetStudent() {
 		return
 	}
 
-	fmt.Println("Student found:")
-	fmt.Printf("ID: %s\n", student.ID)
-	fmt.Printf("Name: %s\n", student.Name)
-	fmt.Printf("Age: %d\n", student.Age)
-	fmt.Printf("Gender: %s\n", student.Gender)
-	fmt.Printf("Scores: %+v\n", student.Scores)
-	fmt.Printf("Average Score: %.2f\n", student.AverageScore())
+	h.printStudentDetail(student)
 }
 
 func (h *Handler) handleListStudents() {
@@ -142,11 +136,7 @@ func (h *Handler) handleListStudents() {
 		return
 	}
 
-	fmt.Println("All students:")
-	for _, student := range students {
-		fmt.Printf("ID: %s, Name: %s, Age: %d, Gender: %s, Avg: %.2f\n",
-			student.ID, student.Name, student.Age, student.Gender, student.AverageScore())
-	}
+	h.printStudentList("All Students", students)
 }
 
 func (h *Handler) handleUpdateScore() {
@@ -237,11 +227,7 @@ func (h *Handler) handlerListStudentsByAverage() {
 		return
 	}
 
-	fmt.Println("Students ranked by average score: ")
-	for i, student := range students {
-		fmt.Printf("%d. ID: %s, Name: %s, Avg: %.2f\n",
-			i+1, student.ID, student.Name, student.Age)
-	}
+	h.printStudentList("Students Ranked by Average Score", students)
 }
 
 func (h *Handler) handlerListFailedStudents() {
@@ -256,11 +242,7 @@ func (h *Handler) handlerListFailedStudents() {
 		return
 	}
 
-	fmt.Println("Failed students: ")
-	for _, student := range students {
-		fmt.Printf("ID: %s, Name: %s, Scores: %+v, Avg: %.2f\n",
-			student.ID, student.Name, student.Scores, student.Age)
-	}
+	h.printStudentList("Failed Students", students)
 }
 
 func (h *Handler) handlerTopNStudents() {
@@ -283,11 +265,7 @@ func (h *Handler) handlerTopNStudents() {
 		return
 	}
 
-	fmt.Printf("Top %d students: \n", len(students))
-	for i, student := range students {
-		fmt.Printf("%d. ID: %s, Name: %s, Avg: %.2f\n",
-			i+1, student.ID, student.Name, student.Age)
-	}
+	h.printStudentList("Top Students", students)
 }
 
 func (h *Handler) readLine(prompt string) string {
@@ -330,6 +308,27 @@ func (h *Handler) printStudentList(title string, students []*entity.Student) {
 			student.Name,
 			student.Age,
 			student.Gender,
+			student.AverageScore(),
+		)
+	}
+
+	fmt.Println("========================")
+}
+
+func (h *Handler) printRankedStudents(title string, students []*entity.Student) {
+	fmt.Println("=====", title, "=====")
+
+	if len(students) == 0 {
+		fmt.Println("No students found.")
+		fmt.Println("========================")
+		return
+	}
+
+	for i, student := range students {
+		fmt.Printf("%d. ID: %-6s Name: %-10s Avg: %.2f\n",
+			i+1,
+			student.ID,
+			student.Name,
 			student.AverageScore(),
 		)
 	}
