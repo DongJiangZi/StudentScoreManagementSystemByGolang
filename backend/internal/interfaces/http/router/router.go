@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterRoutes(studentHandler *handler.StudentHandler) {
-	http.HandleFunc("/student", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/students", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			studentHandler.ListStudents(w, r)

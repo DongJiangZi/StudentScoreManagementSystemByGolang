@@ -78,6 +78,7 @@ func (h *StudentHandler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 			Message: "invalid request body",
 			Data:    nil,
 		})
+		return
 	}
 
 	student, err := h.studentService.CreateStudent(req)

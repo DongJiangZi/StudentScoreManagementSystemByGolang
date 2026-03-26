@@ -7,13 +7,13 @@ import (
 )
 
 type Student struct {
-	ID        string
-	Name      string
-	Age       int
-	Gender    string
-	Scores    map[string]float64
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        string             `json:"id"`
+	Name      string             `json:"name"`
+	Age       int                `json:"age"`
+	Gender    string             `json:"gender"`
+	Scores    map[string]float64 `json:"scores"`
+	CreatedAt time.Time          `json:"createdAt"`
+	UpdatedAt time.Time          `json:"updatedAt"`
 }
 
 func NewStudent(id, name string, age int, gender string) (*Student, error) {

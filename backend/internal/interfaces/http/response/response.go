@@ -1,4 +1,4 @@
-package respone
+package response
 
 import (
 	"EduCoreStudentManagementSystem/internal/pkg/errs"
@@ -22,17 +22,17 @@ func WriteJson(w http.ResponseWriter, httpStatus int, body Body) {
 
 func Success(w http.ResponseWriter, data interface{}) {
 	WriteJson(w, http.StatusOK, Body{
-		Code: 0,
+		Code:    0,
 		Message: "success",
-		Data: data,
+		Data:    data,
 	})
 }
 
 func Created(w http.ResponseWriter, data interface{}) {
 	WriteJson(w, http.StatusCreated, Body{
-		Code: 0,
+		Code:    0,
 		Message: "success",
-		Data: data,
+		Data:    data,
 	})
 }
 
@@ -40,9 +40,9 @@ func Error(w http.ResponseWriter, err error) {
 	httpStatus, code, message := mapError(err)
 
 	WriteJson(w, httpStatus, Body{
-		Code: code,
+		Code:    code,
 		Message: message,
-		Data: nil,
+		Data:    nil,
 	})
 }
 
