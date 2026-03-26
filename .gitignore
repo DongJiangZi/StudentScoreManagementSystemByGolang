@@ -1,0 +1,32 @@
+﻿# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Go
+**/bin/
+**/tmp/
+*.test
+*.out
+coverage.out
+
+# Backend runtime artifacts
+backend/logs/
+backend/data/*.tmp
+backend/data/*.bak
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.vite/
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+!.env.example
